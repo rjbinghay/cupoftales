@@ -1,0 +1,105 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Dashboard — StorySip{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+
+    <header class="mb-8 flex items-end justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="text-3xl font-semibold tracking-tight">Dashboard</h1>
+            <p class="text-sm mt-1" style="color: var(--color-ink-muted);">
+                Welcome back, {% include 'stories/_author_name.html' with author=request.user %}.
+            </p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{% url 'edit_profile' %}" class="btn btn-ghost">Edit profile</a>
+            <a href="{% url 'story_create' %}" class="btn btn-primary">New story</a>
+        </div>
+    </header>
+
+    <section class="dash-section">
+        <h2 class="dash-section__title">Your profile</h2>
+        <dl class="text-sm space-y-2">
+            {% if request.user.email %}
+                <div><dt class="inline font-medium">Email:</dt> <dd class="inline">{{ request.user.email }}</dd></div>
+            {% endif %}
+            <div>
+                <dt class="inline font-medium">Bio:</dt>
+                <dd class="inline">
+                    {% if request.user.writerprofile.bio %}
+                        {{ request.user.writerprofile.bio }}
+                    {% else %}
+                        <em style="color: var(--color-ink-muted);">No bio yet.</em>
+                        <a href="{% url 'edit_profile' %}" class="hover:underline" style="color: var(--color-accent);">Add one</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div>
+                <dt class="font-medium mb-1">Donation links:</dt>
+                <dd>
+                    <ul class="list-disc list-inside space-y-1" style="color: var(--color-ink-muted);">
+                        {% if request.user.writerprofile.paypal_link %}
+                            <li>PayPal: {{ request.user.writerprofile.paypal_link }}</li>
+                        {% endif %}
+                        {% if request.user.writerprofile.kofi_link %}
+                            <li>Ko-fi: {{ request.user.writerprofile.kofi_link }}</li>
+                        {% endif %}
+                        {% if not request.user.writerprofile.paypal_link and not request.user.writerprofile.kofi_link %}
+                            <li><em>None set.</em>
+                                <a href="{% url 'edit_profile' %}" class="hover:underline" style="color: var(--color-accent);">Add them</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </dd>
+            </div>
+        </dl>
+    </section>
+
+    <section class="dash-section">
+        <h2 class="dash-section__title">Your stories ({{ my_stories.count }})</h2>
+
+        {% if my_stories %}
+            <ul class="divide-y" style="border-color: var(--color-rule);">
+                {% for story in my_stories %}
+                <li class="py-4 flex items-start justify-between gap-4
+                           {% if not story.is_published %}opacity-70{% endif %}">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-base font-semibold truncate">
+                                <a href="{% url 'story_detail' id=story.id %}"
+                                   class="hover:underline">{{ story.title }}</a>
+                            </h3>
+                            {% if story.is_published %}
+                                <span class="status-pill status-pill--published">Published</span>
+                            {% else %}
+                                <span class="status-pill status-pill--draft">Draft</span>
+                            {% endif %}
+                        </div>
+                        <div class="meta-row text-xs">
+                            <span>{{ story.created_at|date:"M d, Y" }}</span>
+                            {% if story.category %}
+                                <span class="meta-row__sep">{{ story.category.name }}</span>
+                            {% endif %}
+                            <span class="meta-row__sep">{{ story.view_count }} views</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <a href="{% url 'story_edit' id=story.id %}" class="btn btn-ghost text-xs">Edit</a>
+                        <a href="{% url 'story_delete' id=story.id %}" class="btn btn-danger text-xs">Delete</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="py-12 text-center">
+                <p class="mb-4" style="color: var(--color-ink-muted);">
+                    You haven't written any stories yet.
+                </p>
+                <a href="{% url 'story_create' %}" class="btn btn-primary">Write your first story</a>
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}

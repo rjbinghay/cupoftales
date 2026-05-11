@@ -1,0 +1,79 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}{{ writer.username }} — StorySip{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+
+    {# Profile header #}
+    <header class="mb-10 pb-8 border-b" style="border-color: var(--color-rule);">
+        <h1 class="text-3xl font-semibold tracking-tight">
+
+         {% include 'stories/_author_name.html' with author=writer %}
+
+        </h1>
+
+        {% if writer.writerprofile.bio %}
+            <p class="mt-3 text-base leading-relaxed max-w-2xl"
+               style="color: var(--color-ink-muted);">
+                {{ writer.writerprofile.bio }}
+            </p>
+        {% endif %}
+
+        {# Donation links — same tip card pattern as story_detail #}
+        {% with profile=writer.writerprofile %}
+        {% if profile.paypal_link or profile.kofi_link or profile.other_donation_link %}
+        <aside class="tip-card mt-6 max-w-2xl">
+            <h3 class="tip-card__title">Support {% include 'stories/_author_name.html' with author=writer %}</h3>
+            <p class="tip-card__note">100% goes directly to the writer.</p>
+            <div class="tip-card__links">
+                {% if profile.paypal_link %}
+                    <a href="{{ profile.paypal_link }}" target="_blank" rel="noopener"
+                       class="btn btn-primary">PayPal</a>
+                {% endif %}
+                {% if profile.kofi_link %}
+                    <a href="{{ profile.kofi_link }}" target="_blank" rel="noopener"
+                       class="btn btn-primary">Ko-fi</a>
+                {% endif %}
+                {% if profile.other_donation_link %}
+                    <a href="{{ profile.other_donation_link }}" target="_blank" rel="noopener"
+                       class="btn btn-ghost">Other</a>
+                {% endif %}
+            </div>
+        </aside>
+        {% endif %}
+        {% endwith %}
+    </header>
+
+    {# Their stories #}
+    <h2 class="text-xl font-semibold mb-6">
+        Stories ({{ stories.count }})
+    </h2>
+
+    {% if stories %}
+        {% for story in stories %}
+        <article class="story-card">
+            <h3 class="story-card__title">
+                <a href="{% url 'story_detail' id=story.id %}">{{ story.title }}</a>
+            </h3>
+            <div class="meta-row mb-3">
+                <span>{{ story.created_at|date:"M d, Y" }}</span>
+                <span class="meta-row__sep">{{ story.read_time_minutes }} min read</span>
+                {% if story.category %}
+                <span class="meta-row__sep">
+                    <a href="{% url 'category_filter' slug=story.category.slug %}"
+                       class="hover:underline">{{ story.category.name }}</a>
+                </span>
+                {% endif %}
+            </div>
+            <p class="story-card__excerpt">{{ story.content|truncatewords:30 }}</p>
+        </article>
+        {% endfor %}
+    {% else %}
+        <p class="py-10 text-center" style="color: var(--color-ink-muted);">
+            {{ writer.username }} hasn't published any stories yet.
+        </p>
+    {% endif %}
+
+</div>
+{% endblock %}

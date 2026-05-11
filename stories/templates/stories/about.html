@@ -1,0 +1,39 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}About — StorySip{% endblock %}
+
+{% block content %}
+<article class="reading-shell">
+    <header class="mb-8">
+        <h1 class="text-4xl font-semibold tracking-tight mb-2">About StorySip</h1>
+        <p style="color: var(--color-ink-muted);">A coffee-break library for short stories.</p>
+    </header>
+
+    <div class="prose-story">
+        <p>
+            <strong>StorySip</strong> is a platform for sharing short stories that can be
+            read in one sitting. Think of it as a coffee-break library.
+        </p>
+
+        <h2>Our Mission</h2>
+        <p>
+            We believe in supporting writers directly. Unlike other platforms that take
+            commissions, writers on StorySip keep <strong>100% of tips</strong> from readers.
+        </p>
+
+        <h2>Features</h2>
+        <ul>
+            <li>Stories designed for 5–15 minute reads</li>
+            <li>Direct support to writers (0% commission)</li>
+            <li>Transparent AI labeling</li>
+            <li>Clean, distraction-free reading experience</li>
+        </ul>
+
+        <h2>Get Started</h2>
+        <p>
+            Want to share your stories?
+            <a href="{% url 'signup' %}">Create an account</a> and start writing.
+        </p>
+    </div>
+</article>
+{% endblock %}

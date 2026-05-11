@@ -1,0 +1,113 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}{{ story.title }} — Cup of Tales{% endblock %}
+
+{% block content %}
+{# Thin reading-progress bar pinned to the top of the viewport. #}
+<div id="read-progress"
+     class="fixed top-0 left-0 h-0.5 z-50 transition-[width] duration-100"
+     style="width:0; background: var(--color-accent);"></div>
+
+<article class="reading-shell">
+
+    <header class="mb-10">
+        <h1 class="text-4xl font-semibold tracking-tight mb-4 leading-tight">
+            {{ story.title }}
+        </h1>
+
+        <div class="meta-row mb-3">
+            <span>By
+                {% include 'stories/_author_name.html' with author=story.author %}
+            </span>
+            <span class="meta-row__sep">{{ story.created_at|date:"F j, Y" }}</span>
+            <span class="meta-row__sep">{{ story.read_time_minutes }} min read</span>
+            {% if story.category %}
+            <span class="meta-row__sep">
+                <a href="{% url 'category_filter' slug=story.category.slug %}"
+                   class="hover:underline">{{ story.category.name }}</a>
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            {% if story.ai_label == 'human' %}
+                <span class="badge badge--human">100% Human Written</span>
+            {% elif story.ai_label == 'assisted' %}
+                <span class="badge badge--assisted">AI-Assisted</span>
+            {% elif story.ai_label == 'ai' %}
+                <span class="badge badge--ai">AI-Generated</span>
+            {% endif %}
+
+            {% for tag in story.tag.all %}
+            <a href="{% url 'tag_detail' slug=tag.slug %}"
+               class="text-xs px-2.5 py-0.5 rounded-full hover:opacity-70 transition-opacity"
+               style="border: 1px solid var(--color-rule); color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 6%, transparent);">#{{ tag.name }}</a>
+            {% endfor %}
+
+            {% if request.user.username == story.author.username %}
+                <a href="{% url 'story_edit' id=story.id %}"
+                   class="text-sm hover:underline"
+                   style="color: var(--color-ink-muted);">Edit</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <hr class="mb-10" style="border-color: var(--color-rule);">
+
+    {# Article body — .prose-story handles paragraph spacing, blockquotes, links. #}
+    <div class="prose-story">
+        {{ story.content|linebreaks }}
+    </div>
+
+    {# Tip card — only rendered if the writer has at least one donation link. #}
+    
+
+    {% with profile=story.author.writerprofile %}
+    {% if profile %}
+    {% if profile.paypal_link or profile.kofi_link or profile.other_donation_link %}
+    <aside class="tip-card">
+        <h3 class="tip-card__title">Enjoyed this story?</h3>
+        <p class="tip-card__note">
+            Support {% include 'stories/_author_name.html' with author=story.author %} directly — 100% goes to the writer.
+        </p>
+        <div class="tip-card__links">
+            {% if profile.paypal_link %}
+                <a href="{{ profile.paypal_link }}" target="_blank" rel="noopener" class="btn btn-primary">PayPal</a>
+            {% endif %}
+            {% if profile.kofi_link %}
+                <a href="{{ profile.kofi_link }}" target="_blank" rel="noopener" class="btn btn-primary">Ko-fi</a>
+            {% endif %}
+            {% if profile.other_donation_link %}
+                <a href="{{ profile.other_donation_link }}" target="_blank" rel="noopener" class="btn btn-ghost">Other</a>
+            {% endif %}
+        </div>
+    </aside>
+    {% endif %}
+    {% endif %}
+    {% endwith %}
+
+
+    <footer class="mt-12 pt-6 border-t" style="border-color: var(--color-rule);">
+        <a href="{% url 'home' %}" class="text-sm hover:underline"
+           style="color: var(--color-accent);">← Back to stories</a>
+    </footer>
+</article>
+
+<script>
+  // Reading progress bar — width = scrolled fraction of article height.
+  (function () {
+    const bar = document.getElementById('read-progress');
+    const article = document.querySelector('article.reading-shell');
+    if (!bar || !article) return;
+    const update = () => {
+      const top = article.offsetTop;
+      const height = article.offsetHeight - window.innerHeight;
+      const scrolled = Math.max(0, window.scrollY - top);
+      const pct = height > 0 ? Math.min(100, (scrolled / height) * 100) : 0;
+      bar.style.width = pct + '%';
+    };
+    document.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+</script>
+{% endblock %}

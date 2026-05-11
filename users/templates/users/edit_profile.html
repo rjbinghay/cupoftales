@@ -1,0 +1,74 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Edit profile — Cup of Tales{% endblock %}
+
+{% block content %}
+<div class="form-card form-card--wide">
+    <h1 class="form-card__title">Edit your profile</h1>
+    <p class="form-card__subtitle">Update your bio and donation links.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-field">
+        <label for="first_name">First name</label>
+        <input type="text" name="first_name" id="first_name"
+        value="{{ profile.user.first_name }}" required>
+        </div>
+
+        <div class="form-field">
+        <label for="last_name">Last name</label>
+        <input type="text" name="last_name" id="last_name"
+        value="{{ profile.user.last_name }}" required>
+        </div>
+
+        <div class="form-field">
+            <label for="display_name">Pen name <span style="color: var(--color-ink-muted); font-weight: normal;">(optional)</span></label>
+            <input type="text" name="display_name" id="display_name"
+                   value="{{ profile.display_name|default_if_none:'' }}"
+                   maxlength="60"
+                   placeholder="Anthony123, Quiet Scribbler, …">
+            <small class="form-help">
+                If set, this appears on your stories instead of your real name.
+                Your real name stays private.
+            </small>
+        </div>
+
+        <div class="form-field">
+            <label for="bio">Bio</label>
+            <textarea name="bio" id="bio" rows="5"
+                      placeholder="Tell readers about yourself…">{{ profile.bio }}</textarea>
+            <small class="form-help">This will appear on your public profile.</small>
+        </div>
+
+        <div class="form-field">
+            <label for="paypal_link">PayPal link</label>
+            <input type="url" name="paypal_link" id="paypal_link"
+                   value="{{ profile.paypal_link }}"
+                   placeholder="https://paypal.me/yourname">
+            <small class="form-help">Your PayPal.me link for donations.</small>
+        </div>
+
+        <div class="form-field">
+            <label for="kofi_link">Ko-fi link</label>
+            <input type="url" name="kofi_link" id="kofi_link"
+                   value="{{ profile.kofi_link }}"
+                   placeholder="https://ko-fi.com/yourname">
+            <small class="form-help">Your Ko-fi profile link.</small>
+        </div>
+
+        <div class="form-field">
+            <label for="other_donation_link">Other donation link</label>
+            <input type="url" name="other_donation_link" id="other_donation_link"
+                   value="{{ profile.other_donation_link }}"
+                   placeholder="https://…">
+            <small class="form-help">Any other payment or donation platform.</small>
+        </div>
+
+        <div class="flex gap-3 pt-4 border-t" style="border-color: var(--color-rule);">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

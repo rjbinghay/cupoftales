@@ -1,0 +1,149 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+
+    <header class="mb-6">
+        <h1 class="text-3xl font-semibold tracking-tight">Latest stories</h1>
+        <p class="text-sm" style="color: var(--color-ink-muted);">
+            Real stories, written by humans. Read free, tip if you enjoy.
+        </p>
+    </header>
+
+    {# Filter toolbar — search + 3 dropdowns. Submits to home, composes all filters. #}
+    <form method="get" action="{% url 'home' %}" class="filter-bar mb-8">
+        <input type="text" name="q" value="{{ q }}"
+               placeholder="Search stories…"
+               class="filter-bar__search">
+
+        <select name="category" class="filter-bar__select"
+                onchange="this.form.submit()">
+            <option value="">All categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if category_slug == cat.slug %}selected{% endif %}>
+                {{ cat.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <select name="sort" class="filter-bar__select"
+                onchange="this.form.submit()">
+            <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+            <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest</option>
+        </select>
+
+        <button type="submit" class="filter-bar__btn">Apply</button>
+
+        {% if q or category_slug or max_read or ai_label or sort != 'newest' %}
+        <a href="{% url 'home' %}" class="filter-bar__clear">Clear</a>
+        {% endif %}
+    </form>
+
+    {# Length strip — filter by max read time. Independent of sort. #}
+    <div class="filter-strip mb-2">
+        <span class="filter-strip__label">Length:</span>
+        <a href="?{{ querystring_no_max_read }}"
+           class="filter-strip__link {% if not max_read %}is-active{% endif %}">
+           Any
+        </a>
+        {% for rt in read_time_thresholds %}
+        <a href="?max_read={{ rt }}{% if querystring_no_max_read %}&{{ querystring_no_max_read }}{% endif %}"
+           class="filter-strip__link {% if max_read == rt|stringformat:'s' %}is-active{% endif %}">
+           ≤ {{ rt }} min
+        </a>
+        {% endfor %}
+    </div>
+
+    {# Authorship strip — filter by AI involvement. Mirrors length pattern. #}
+    <div class="filter-strip mb-8">
+        <span class="filter-strip__label">Authorship:</span>
+        <a href="?{{ querystring_no_ai }}"
+           class="filter-strip__link {% if not ai_label %}is-active{% endif %}">
+           Any
+        </a>
+        <a href="?ai_label=human{% if querystring_no_ai %}&{{ querystring_no_ai }}{% endif %}"
+           class="filter-strip__link {% if ai_label == 'human' %}is-active{% endif %}">
+           100% Human
+        </a>
+        <a href="?ai_label=assisted{% if querystring_no_ai %}&{{ querystring_no_ai }}{% endif %}"
+           class="filter-strip__link {% if ai_label == 'assisted' %}is-active{% endif %}">
+           AI-assisted
+        </a>
+        <a href="?ai_label=ai{% if querystring_no_ai %}&{{ querystring_no_ai }}{% endif %}"
+           class="filter-strip__link {% if ai_label == 'ai' %}is-active{% endif %}">
+           AI-generated
+        </a>
+    </div>
+
+    {% if stories %}
+        {% for story in stories %}
+        <article class="story-card">
+            <h2 class="story-card__title">
+                <a href="{% url 'story_detail' id=story.id %}">{{ story.title }}</a>
+            </h2>
+
+            <div class="meta-row mb-3">
+                <span>By {% include 'stories/_author_name.html' with author=story.author %}</span>
+                <span class="meta-row__sep">{{ story.created_at|date:"M d, Y" }}</span>
+                <span class="meta-row__sep">{{ story.read_time_minutes }} min read</span>
+                {% if story.category %}
+                <span class="meta-row__sep">
+                    <a href="{% url 'category_filter' slug=story.category.slug %}"
+                       class="hover:underline">{{ story.category.name }}</a>
+                </span>
+                {% endif %}
+                {% if story.ai_label == 'human' %}
+                    <span class="badge badge--human">100% Human</span>
+                {% elif story.ai_label == 'assisted' %}
+                    <span class="badge badge--assisted">AI-Assisted</span>
+                {% elif story.ai_label == 'ai' %}
+                    <span class="badge badge--ai">AI-Generated</span>
+                {% endif %}
+            </div>
+
+            <p class="story-card__excerpt">{{ story.content|truncatewords:40 }}</p>
+
+            {% if story.tag.all %}
+            <div class="flex flex-wrap gap-1.5 mt-3">
+                {% for tag in story.tag.all %}
+                <a href="{% url 'tag_detail' slug=tag.slug %}"
+                   class="text-xs px-2.5 py-0.5 rounded-full hover:opacity-70 transition-opacity"
+                   style="border: 1px solid var(--color-rule); color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 6%, transparent);">#{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <a href="{% url 'story_detail' id=story.id %}"
+               class="mt-3 inline-block text-sm font-medium"
+               style="color: var(--color-accent);">
+                Read more →
+            </a>
+        </article>
+        {% endfor %}
+
+        {# Pagination — minimal, prev/next + page count. #}
+        <nav class="mt-10 flex items-center justify-between text-sm">
+            <span style="color: var(--color-ink-muted);">
+                Page {{ stories.number }} of {{ stories.paginator.num_pages }}
+            </span>
+            <div class="flex gap-2">
+                {% if stories.has_previous %}
+                    <a href="?page={{ stories.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}" class="btn btn-ghost">‹ Previous</a>
+                {% endif %}
+                {% if stories.has_next %}
+                    <a href="?page={{ stories.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}" class="btn btn-ghost">Next ›</a>
+                {% endif %}
+            </div>
+        </nav>
+
+    {% else %}
+        <div class="py-20 text-center">
+            <h2 class="text-xl font-semibold mb-2">No stories yet</h2>
+            <p style="color: var(--color-ink-muted);">Be the first to share one.</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

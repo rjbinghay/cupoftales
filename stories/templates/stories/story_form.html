@@ -1,0 +1,124 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}{{ action }} story — Cup of Tales{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+<style>
+    .tagify {
+        --tags-border-color: var(--color-rule);
+        --tags-focus-border-color: var(--color-accent);
+        --tag-bg: color-mix(in srgb, var(--color-accent) 8%, transparent);
+        --tag-text-color: var(--color-accent);
+        --tag-remove-btn-color: var(--color-accent);
+        --tagify-dd-color-primary: var(--color-accent);
+        border-radius: 6px;
+        padding: 4px 6px;
+        font-family: inherit;
+        font-size: 0.875rem;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-card form-card--wide">
+    <h1 class="form-card__title">{{ action }} story</h1>
+    <p class="form-card__subtitle">
+        {% if action == 'Create' %}Share your story with the world.{% else %}Update your story.{% endif %}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- {% if form.errors %}
+            <div class="form-errors">
+                <strong>Please fix the following:</strong>
+                {{ form.errors }}
+            </div>
+        {% endif %} -->
+
+
+        {% for field in form %}
+            {% for error in field.errors %}
+          
+            <div class="form-errors">
+                <!-- <strong>Please fix the following:</strong> -->
+               {{ error }}
+            </div>
+
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+                 <div class="form-errors">
+                <!-- <strong>Please fix the following:</strong> -->
+               {{ error }}
+            </div>
+        {% endfor %}
+
+        <div class="form-field">
+            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% if form.title.help_text %}<small class="form-help">{{ form.title.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+            {{ form.category }}
+            {% if form.category.help_text %}<small class="form-help">{{ form.category.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+        <label for="{{ form.tag_input.id_for_label }}">{{ form.tag_input.label }}</label>
+        {{ form.tag_input }}
+        <small class="form-help">{{ form.tag_input.help_text }}</small>
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.ai_label.id_for_label }}">{{ form.ai_label.label }}</label>
+            {{ form.ai_label }}
+            {% if form.ai_label.help_text %}<small class="form-help">{{ form.ai_label.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+            {{ form.content }}
+            {% if form.content.help_text %}<small class="form-help">{{ form.content.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field flex items-center gap-2">
+            {{ form.is_published }}
+            <label for="{{ form.is_published.id_for_label }}" class="!mb-0 cursor-pointer">
+                {{ form.is_published.label }}
+            </label>
+        </div>
+
+        <div class="flex gap-3 pt-4 border-t" style="border-color: var(--color-rule);">
+            <button type="submit" class="btn btn-primary">
+                {% if action == 'Create' %}Create story{% else %}Save changes{% endif %}
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<script>
+  const input = document.querySelector('#id_tag_input');
+  const whitelist = [{% for t in all_tags %}"{{ t.name }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+
+  new Tagify(input, {
+    whitelist: whitelist,
+    enforceWhitelist: false,
+    maxTags: 5,
+    dropdown: {
+      maxItems: 20,
+      enabled: 0,
+      closeOnSelect: true,
+    },
+    originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(', ')
+  });
+</script>
+{% endblock %}

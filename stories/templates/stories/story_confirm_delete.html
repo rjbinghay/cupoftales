@@ -1,0 +1,28 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Delete story — StorySip{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1 class="form-card__title">Delete this story?</h1>
+    <p class="form-card__subtitle">This action cannot be undone.</p>
+
+    <div class="rounded-md border p-4 mb-6" style="border-color: var(--color-rule);">
+        <h3 class="font-semibold mb-1" style="font-family: var(--font-serif);">{{ story.title }}</h3>
+        <p class="text-xs mb-2" style="color: var(--color-ink-muted);">
+            {{ story.category.name }} · {{ story.created_at|date:"M d, Y" }}
+        </p>
+        <p class="text-sm" style="color: var(--color-ink-muted);">
+            {{ story.content|truncatewords:40 }}
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex gap-3">
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

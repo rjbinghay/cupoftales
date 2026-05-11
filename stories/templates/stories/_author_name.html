@@ -1,0 +1,9 @@
+{% comment %}
+stories/templates/stories/_author_name.html
+Display order driven by WriterProfile.public_name property:
+pen name → real full name → @username.
+{% endcomment %}
+<a href="{% url 'profile' username=author.username %}"
+   class="font-medium hover:underline">
+    {{ author.writerprofile.public_name }}
+</a>

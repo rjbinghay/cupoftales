@@ -1,0 +1,31 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}{{ page_title }} — StorySip{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+
+    <header class="mb-8">
+        <h1 class="text-3xl font-semibold tracking-tight">Browse by category</h1>
+        <p class="text-sm" style="color: var(--color-ink-muted);">
+            Pick a mood. Each category is a different kind of read.
+        </p>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for cat in categories %}
+        <a href="{% url 'category_filter' slug=cat.slug %}"
+           class="block p-6 rounded-lg border transition-colors hover:border-[color:var(--color-accent)]"
+           style="border-color: var(--color-rule);">
+            <h2 class="text-xl font-semibold mb-1" style="font-family: var(--font-serif);">
+                {{ cat.name }}
+            </h2>
+            <p class="text-sm" style="color: var(--color-ink-muted);">
+                {{ cat.story_count }} {{ cat.story_count|pluralize:"story,stories" }}
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

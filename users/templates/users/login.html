@@ -1,0 +1,39 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Log in — StorySip{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1 class="form-card__title">Welcome back</h1>
+    <p class="form-card__subtitle">Log in to manage your stories and profile.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="form-errors">Invalid username or password. Please try again.</div>
+        {% endif %}
+
+        <div class="form-field">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            {{ form.username }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full">Log in</button>
+    </form>
+
+    <a href="{% url 'password_reset' %}" 
+   class="text-sm hover:underline"
+   style="color: var(--color-ink-muted);">Forgot your password?</a>
+
+    <p class="text-sm text-center mt-6" style="color: var(--color-ink-muted);">
+        Don't have an account?
+        <a href="{% url 'signup' %}" class="hover:underline" style="color: var(--color-accent);">Sign up</a>
+    </p>
+</div>
+{% endblock %}

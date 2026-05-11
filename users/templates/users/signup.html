@@ -1,0 +1,73 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Sign up — StorySip{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1 class="form-card__title">Create your account</h1>
+    <p class="form-card__subtitle">Join StorySip and start sharing your stories.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% for error in field.errors %}
+          
+            <div class="form-errors">
+                <!-- <strong>Please fix the following:</strong> -->
+               {{ error }}
+            </div>
+
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+                 <div class="form-errors">
+                <!-- <strong>Please fix the following:</strong> -->
+               {{ error }}
+            </div>
+        {% endfor %}
+        
+        <div class="form-field">
+            <label for="{{ form.first_name.id_for_label }}">First name</label>
+            {{ form.first_name }}
+            {% if form.first_name.help_text %}<small class="form-help">{{ form.first_name.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.last_name.id_for_label }}">Last name</label>
+            {{ form.last_name }}
+            {% if form.last_name.help_text %}<small class="form-help">{{ form.last_name.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}
+            {% if form.email.help_text %}<small class="form-help">{{ form.email.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            {{ form.username }}
+            {% if form.username.help_text %}<small class="form-help">{{ form.username.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password1.id_for_label }}">Password</label>
+            {{ form.password1 }}
+            {% if form.password1.help_text %}<small class="form-help">{{ form.password1.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+            {{ form.password2 }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full">Sign up</button>
+    </form>
+
+    <p class="text-sm text-center mt-6" style="color: var(--color-ink-muted);">
+        Already have an account?
+        <a href="{% url 'login' %}" class="hover:underline" style="color: var(--color-accent);">Log in</a>
+    </p>
+</div>
+{% endblock %}
