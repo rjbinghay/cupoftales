@@ -36,3 +36,7 @@ desktop.ini
 
 # Tailwind / Node (for when we add it)
 node_modules/
+static/css/main.css
+
+# SQLite data volume (lives on the server, not in the repo)
+data/
