@@ -20,7 +20,6 @@ staticfiles/        # collectstatic output (keep your source static/ tracked)
 
 # Environment / secrets
 .env
-.env.*
 !.env.example       # keep an example file if you make one
 
 # Editors / IDEs
