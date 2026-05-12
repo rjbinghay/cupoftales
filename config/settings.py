@@ -96,8 +96,9 @@ CSRF_TRUSTED_ORIGINS = ['https://www.rhoderich.com']
 # Email — Brevo SMTP
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-relay.brevo.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '1') == '1'
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', '0') == '1'
 EMAIL_HOST_USER = os.environ.get('BREVO_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('BREVO_KEY')
 DEFAULT_FROM_EMAIL = 'rjbinghay@gmail.com'
