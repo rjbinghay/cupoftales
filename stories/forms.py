@@ -24,7 +24,8 @@ class StoryForm(forms.ModelForm):
     class Meta:
         model = Story
         # tag is handled manually via tag_input — not in fields
-        fields = ['title', 'content', 'category', 'ai_label', 'is_published']
+        fields = ['title', 'content', 'category',
+                  'ai_label', 'is_published', 'cover_image']
 
         widgets = {
             'title': forms.TextInput(attrs={
@@ -38,6 +39,11 @@ class StoryForm(forms.ModelForm):
             }),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'ai_label': forms.Select(attrs={'class': 'form-control'}),
+
+            'cover_image': forms.TextInput(attrs={
+                'placeholder': 'https://picsum.photos/800/400',
+                'class': 'form-control'
+            }),
         }
 
         labels = {
@@ -46,6 +52,7 @@ class StoryForm(forms.ModelForm):
             'category': 'Category',
             'ai_label': 'AI Involvement',
             'is_published': 'Publish immediately?',
+            'cover_image': 'Cover Image URL',
         }
 
         help_texts = {
@@ -53,6 +60,7 @@ class StoryForm(forms.ModelForm):
             'content': 'Pour your heart out.',
             'ai_label': 'Be honest about AI usage.',
             'is_published': 'Uncheck to save as draft.',
+            'cover_image': 'Enter your Cover Image URL if any.',
         }
 
     def __init__(self, *args, **kwargs):

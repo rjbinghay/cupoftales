@@ -11,6 +11,16 @@
 <article class="reading-shell">
 
     <header class="mb-10">
+        {% if story.cover_image %}
+        <div class="relative mb-8 rounded-lg overflow-hidden"
+             style="height: 380px;">
+            <img src="{{ story.cover_image }}" alt="{{ story.title }}"
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0"
+                 style="background: linear-gradient(to bottom, transparent 40%, var(--color-paper) 100%);"></div>
+        </div>
+        {% endif %}
+
         <h1 class="text-4xl font-semibold tracking-tight mb-4 leading-tight">
             {{ story.title }}
         </h1>

@@ -23,9 +23,11 @@ INSTALLED_APPS = [
     'users',
 ]
 
+_whitenoise = [] if DEBUG else ['whitenoise.middleware.WhiteNoiseMiddleware']
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    *_whitenoise,
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,13 +77,15 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files
-STATIC_URL = '/apps/cupoftales/static/'
+STATIC_URL = os.environ.get('DJANGO_STATIC_URL', '/apps/cupoftales/static/')
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Subpath deployment — prepended to all {% url %} reversals
-FORCE_SCRIPT_NAME = '/apps/cupoftales'
+_script_name = os.environ.get('DJANGO_FORCE_SCRIPT_NAME', '')
+if _script_name:
+    FORCE_SCRIPT_NAME = _script_name
 
 # Trust the X-Forwarded-Proto header from nginx
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

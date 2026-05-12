@@ -110,6 +110,7 @@ class Story(models.Model):
     updated_at = models.DateTimeField(auto_now=True)      # Updated on save
     is_published = models.BooleanField(default=False)
     view_count = models.IntegerField(default=0)
+    cover_image = models.URLField(blank=True)  # URL for image
 
     # AI labeling (from our documentation!)
     AI_HUMAN = 'human'
