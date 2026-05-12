@@ -111,6 +111,7 @@ class Story(models.Model):
     is_published = models.BooleanField(default=False)
     view_count = models.IntegerField(default=0)
     cover_image = models.URLField(blank=True)  # URL for image
+    source = models.TextField(blank=True)  # TEXT field (unlimited length)
 
     # AI labeling (from our documentation!)
     AI_HUMAN = 'human'
@@ -125,6 +126,21 @@ class Story(models.Model):
         max_length=10,
         choices=AI_CHOICES,
         default=AI_HUMAN
+    )
+
+    story_type_original = 'original'
+    story_type_retelling = 'retelling'
+    story_type_adaptation = 'adaptation'
+    story_type_choices = [
+        (story_type_original, 'Original'),
+        (story_type_retelling, 'Retelling'),
+        (story_type_adaptation, 'Adaptation'),
+    ]
+
+    story_type = models.CharField(
+        max_length=10,
+        choices=story_type_choices,
+        default=story_type_original
     )
 
     class Meta:

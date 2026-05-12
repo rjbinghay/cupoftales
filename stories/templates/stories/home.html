@@ -112,6 +112,11 @@
                 {% elif story.ai_label == 'ai' %}
                     <span class="badge badge--ai">AI-Generated</span>
                 {% endif %}
+                {% if story.story_type == 'retelling' %}
+                    <span class="badge" style="background: color-mix(in srgb, #b45309 10%, transparent); color: #b45309; border: 1px solid #b45309;">Retelling</span>
+                {% elif story.story_type == 'adaptation' %}
+                    <span class="badge" style="background: color-mix(in srgb, #b45309 10%, transparent); color: #b45309; border: 1px solid #b45309;">Adaptation</span>
+                {% endif %}
             </div>
 
             <p class="story-card__excerpt">{{ story.content|truncatewords:40 }}</p>

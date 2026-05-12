@@ -48,6 +48,12 @@
                 <span class="badge badge--ai">AI-Generated</span>
             {% endif %}
 
+            {% if story.story_type == 'retelling' %}
+                <span class="badge" style="background: color-mix(in srgb, #b45309 10%, transparent); color: #b45309; border: 1px solid #b45309;">Retelling</span>
+            {% elif story.story_type == 'adaptation' %}
+                <span class="badge" style="background: color-mix(in srgb, #b45309 10%, transparent); color: #b45309; border: 1px solid #b45309;">Adaptation</span>
+            {% endif %}
+
             {% for tag in story.tag.all %}
             <a href="{% url 'tag_detail' slug=tag.slug %}"
                class="text-xs px-2.5 py-0.5 rounded-full hover:opacity-70 transition-opacity"
@@ -68,6 +74,15 @@
     <div class="prose-story">
         {{ story.content|linebreaks }}
     </div>
+
+    {# Source footnote — only rendered if writer provided a source. #}
+    {% if story.source %}
+    {% load markdownify %}
+    <div class="mt-10 pt-6 border-t text-sm" style="border-color: var(--color-rule); color: var(--color-ink-muted);">
+        <p class="font-semibold mb-1" style="color: var(--color-ink);">Source</p>
+        <div class="prose-story" style="font-size: 0.875rem;">{{ story.source|markdownify }}</div>
+    </div>
+    {% endif %}
 
     {# Tip card — only rendered if the writer has at least one donation link. #}
     

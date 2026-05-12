@@ -97,6 +97,18 @@
             {{ form.cover_image }}
             {% if form.cover_image.help_text %}<small class="form-help">{{ form.cover_image.help_text }}</small>{% endif %}
         </div>
+
+         <div class="form-field">
+            <label for="{{ form.story_type.id_for_label }}">{{ form.story_type.label }}</label>
+            {{ form.story_type }}
+            {% if form.story_type.help_text %}<small class="form-help">{{ form.story_type.help_text }}</small>{% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
+            {{ form.source }}
+            {% if form.source.help_text %}<small class="form-help">{{ form.source.help_text }}</small>{% endif %}
+        </div>
       
         <div class="flex gap-3 pt-4 border-t" style="border-color: var(--color-rule);">
             <button type="submit" class="btn btn-primary">

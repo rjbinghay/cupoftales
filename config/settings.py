@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'stories',
     'users',
+    'markdownify'
 ]
 
 _whitenoise = [] if DEBUG else ['whitenoise.middleware.WhiteNoiseMiddleware']

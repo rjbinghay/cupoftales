@@ -96,13 +96,16 @@ class Command(BaseCommand):
                     {
                         'role': 'user',
                         'content': (
-                            f'Write an original short story inspired by or in the style of "{style}". '
-                            'Keep it between 1 minute to 10 minutes reading time. '
-                            'Give it a fitting title. '
-                            'Return your response in this exact format with no extra text before or after:\n\n'
-                            'TITLE: <title here>\n'
-                            'TAGS: <3 to 5 comma-separated tags relevant to the story>\n'
-                            'STORY: <full story text here>'
+                                f'Write an original short story inspired by or in the style of "{style}". '
+                                'Keep it between 2 to 10 minutes reading time. '
+                                'Give it a fitting title. '
+                                'If the story is based on an existing tale, mark it as retelling or adaptation and credit the source.\n\n'
+                                'Return your response in this exact format with no extra text before or after:\n\n'
+                                'TITLE: <title here>\n'
+                                'TAGS: <3 to 5 comma-separated tags relevant to the story>\n'
+                                'STORY_TYPE: <one of: original, retelling, adaptation>\n'
+                                'SOURCE: <credit the original source with links if applicable, or leave blank>\n'
+                                'STORY: <full story text here — this must be the last field>'
                         ),
                     }
                 ],
@@ -111,7 +114,11 @@ class Command(BaseCommand):
             raw = message.content[0].text.strip()
 
             # Parse title and story body
-            title, content, storytags = self._parse_response(raw)
+            title, content, storytags, story_type, source = self._parse_response(
+                raw)
+
+            self.stdout.write(self.style.WARNING(raw))
+
             if not title or not content:
                 self.stdout.write(self.style.ERROR(
                     f'  [{i + 1}/{count}] Could not parse response. Skipping.'
@@ -125,6 +132,8 @@ class Command(BaseCommand):
                 category=category,
                 ai_label=Story.AI_GENERATED,
                 is_published=options['publish'],
+                story_type=story_type,
+                source=source
 
             )
             story.cover_image = f'https://picsum.photos/seed/{story.id}/1200/500'
@@ -157,13 +166,19 @@ class Command(BaseCommand):
         title = ''
         content = ''
         tags = ''
+        story_type = 'original'
+        source = ''
         for line in raw.splitlines():
             if line.startswith('TITLE:'):
                 title = line.removeprefix('TITLE:').strip()
             elif line.startswith('TAGS:'):
                 tags = line.removeprefix('TAGS:').strip()
+            elif line.startswith('STORY_TYPE:'):
+                story_type = line.removeprefix('STORY_TYPE:').strip().lower()
+            elif line.startswith('SOURCE:'):
+                source = line.removeprefix('SOURCE:').strip()
             elif line.startswith('STORY:'):
                 content = line.removeprefix('STORY:').strip()
             elif content:
                 content += '\n' + line
-        return title, content, tags
+        return title, content, tags, story_type, source

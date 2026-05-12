@@ -25,7 +25,7 @@ class StoryForm(forms.ModelForm):
         model = Story
         # tag is handled manually via tag_input — not in fields
         fields = ['title', 'content', 'category',
-                  'ai_label', 'is_published', 'cover_image']
+                  'ai_label', 'is_published', 'cover_image', 'story_type', 'source']
 
         widgets = {
             'title': forms.TextInput(attrs={
@@ -44,6 +44,14 @@ class StoryForm(forms.ModelForm):
                 'placeholder': 'https://picsum.photos/800/400',
                 'class': 'form-control'
             }),
+            'story_type': forms.Select(attrs={'class': 'form-control'}),
+            'source': forms.Textarea(attrs={
+                'placeholder': ('This story was adapted from [Aesop\'s Fables](https://gutenberg.org/ebooks/11).\n'
+                                'Original tales can also be found at [Wikisource](https://en.wikisource.org).\n'
+                                'Supports markdown — wrap links like [text](url).'),
+                'rows': 5,
+                'class': 'form-control'
+            }),
         }
 
         labels = {
@@ -53,6 +61,8 @@ class StoryForm(forms.ModelForm):
             'ai_label': 'AI Involvement',
             'is_published': 'Publish immediately?',
             'cover_image': 'Cover Image URL',
+            'story_type': 'Story Type',
+            'source': 'Source',
         }
 
         help_texts = {
@@ -61,6 +71,7 @@ class StoryForm(forms.ModelForm):
             'ai_label': 'Be honest about AI usage.',
             'is_published': 'Uncheck to save as draft.',
             'cover_image': 'Enter your Cover Image URL if any.',
+            'source': 'Optional. Credit your sources and link to originals. Supports markdown.',
         }
 
     def __init__(self, *args, **kwargs):
