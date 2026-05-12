@@ -4,8 +4,8 @@
         {% if story.cover_image %}
         <a href="{% url 'story_detail' id=story.id %}" class="shrink-0">
             <img src="{{ story.cover_image }}" alt="{{ story.title }}"
-                 class="object-cover rounded shadow-sm w-full sm:w-28 sm:h-40"
-                 style="max-height: 220px;">
+                 class="object-cover rounded shadow-sm w-full sm:w-36"
+                 style="max-height: 220px; aspect-ratio: 3/4;">
         </a>
         {% endif %}
 

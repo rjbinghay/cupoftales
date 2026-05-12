@@ -12,13 +12,14 @@
 
     <header class="mb-10">
         {% if story.cover_image %}
-        <div class="relative mb-8 rounded-lg overflow-hidden"
-             style="height: 380px;">
+        <a href="{{ story.cover_image }}" target="_blank" rel="noopener">
+        <div class="relative mb-8 rounded-lg overflow-hidden">
             <img src="{{ story.cover_image }}" alt="{{ story.title }}"
-                 class="w-full h-full object-cover">
+                 class="w-full object-contain">
             <div class="absolute inset-0"
-                 style="background: linear-gradient(to bottom, transparent 40%, var(--color-paper) 100%);"></div>
+                 style="background: linear-gradient(to bottom, transparent 75%, var(--color-paper) 100%);"></div>
         </div>
+        </a>
         {% endif %}
 
         <h1 class="text-4xl font-semibold tracking-tight mb-4 leading-tight">
