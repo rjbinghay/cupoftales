@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'stories',
     'users',
-    'markdownify'
+    'markdownify',
+    'anymail',
 ]
 
 _whitenoise = [] if DEBUG else ['whitenoise.middleware.WhiteNoiseMiddleware']
@@ -93,12 +94,9 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_TRUSTED_ORIGINS = ['https://www.rhoderich.com']
 
-# Email — Brevo SMTP
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-relay.brevo.com'
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '1') == '1'
-EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', '0') == '1'
-EMAIL_HOST_USER = os.environ.get('BREVO_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('BREVO_KEY')
+# Email — Brevo HTTP API via django-anymail (no SMTP ports needed)
+EMAIL_BACKEND = 'anymail.backends.brevo.EmailBackend'
 DEFAULT_FROM_EMAIL = 'rjbinghay@gmail.com'
+ANYMAIL = {
+    'BREVO_API_KEY': os.environ.get('BREVO_KEY'),
+}
