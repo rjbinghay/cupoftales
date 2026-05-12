@@ -22,7 +22,32 @@
         <div class="page-shell flex items-center justify-between gap-6">
             <a href="{% url 'home' %}" class="site-header__brand">☕ Cup of Tales</a>
 
-            <nav class="site-header__nav">
+            {# Hamburger button — mobile only #}
+            <button id="nav-toggle" class="flex flex-col gap-1.5 p-2 md:hidden" aria-label="Toggle menu">
+                <span class="block h-0.5 w-6" style="background: var(--color-ink);"></span>
+                <span class="block h-0.5 w-6" style="background: var(--color-ink);"></span>
+                <span class="block h-0.5 w-6" style="background: var(--color-ink);"></span>
+            </button>
+
+            {# Desktop nav #}
+            <nav class="site-header__nav hidden md:flex">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'category_list' %}">Categories</a>
+                <a href="{% url 'about' %}">About</a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'story_create' %}">Write</a>
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'signup' %}">Sign up</a>
+                {% endif %}
+            </nav>
+        </div>
+
+        {# Mobile nav — hidden by default, toggled by JS #}
+        <div id="mobile-nav" class="hidden md:hidden page-shell pb-4">
+            <nav class="flex flex-col gap-3 text-sm pt-3 border-t" style="border-color: var(--color-rule);">
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'category_list' %}">Categories</a>
                 <a href="{% url 'about' %}">About</a>
@@ -59,6 +84,11 @@
       // Auto-dismiss flash messages after 5s.
       document.querySelectorAll('[data-flash]').forEach(el => {
         setTimeout(() => el.remove(), 5000);
+      });
+    </script>
+    <script>
+      document.getElementById('nav-toggle').addEventListener('click', function () {
+        document.getElementById('mobile-nav').classList.toggle('hidden');
       });
     </script>
     {% block extra_scripts %}{% endblock %}

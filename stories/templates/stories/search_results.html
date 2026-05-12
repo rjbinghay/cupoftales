@@ -30,36 +30,7 @@
 
     {% if stories %}
         {% for story in stories %}
-        <article class="story-card">
-            <h2 class="story-card__title">
-                <a href="{% url 'story_detail' id=story.id %}">{{ story.title }}</a>
-            </h2>
-
-            <div class="meta-row mb-3">
-                <span>By <a href="{% url 'profile' username=story.author.username %}" class="font-medium hover:underline">{{ story.author.username }}</a></span>
-                <span class="meta-row__sep">{{ story.created_at|date:"M d, Y" }}</span>
-                <span class="meta-row__sep">{{ story.read_time_minutes }} min read</span>
-                {% if story.category %}
-                <span class="meta-row__sep">
-                    <a href="{% url 'category_filter' slug=story.category.slug %}"
-                       class="hover:underline">{{ story.category.name }}</a>
-                </span>
-                {% endif %}
-                {% if story.ai_label == 'human' %}
-                    <span class="badge badge--human">100% Human</span>
-                {% elif story.ai_label == 'assisted' %}
-                    <span class="badge badge--assisted">AI-Assisted</span>
-                {% elif story.ai_label == 'ai' %}
-                    <span class="badge badge--ai">AI-Generated</span>
-                {% endif %}
-            </div>
-
-            <p class="story-card__excerpt">{{ story.content|truncatewords:40 }}</p>
-
-            <a href="{% url 'story_detail' id=story.id %}"
-               class="mt-3 inline-block text-sm font-medium"
-               style="color: var(--color-accent);">Read more →</a>
-        </article>
+        {% include 'stories/_story_card.html' %}
         {% endfor %}
 
         <nav class="mt-10 flex items-center justify-between text-sm">

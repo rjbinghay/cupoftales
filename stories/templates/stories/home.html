@@ -79,61 +79,7 @@
 
     {% if stories %}
         {% for story in stories %}
-        <article class="story-card">
-    <div class="flex gap-4">
-
-        {% if story.cover_image %}
-        <a href="{% url 'story_detail' id=story.id %}" class="shrink-0">
-            <img src="{{ story.cover_image }}" alt="{{ story.title }}"
-                 class="w-28 object-cover rounded shadow-sm"
-                 style="height: 168px; width: 112px;">
-        </a>
-        {% endif %}
-
-        <div class="flex flex-col flex-1">
-            <h2 class="story-card__title">
-                <a href="{% url 'story_detail' id=story.id %}">{{ story.title }}</a>
-            </h2>
-
-            <div class="meta-row mb-3">
-                <span>By {% include 'stories/_author_name.html' with author=story.author %}</span>
-                <span class="meta-row__sep">{{ story.created_at|date:"M d, Y" }}</span>
-                <span class="meta-row__sep">{{ story.read_time_minutes }} min read</span>
-                {% if story.category %}
-                <span class="meta-row__sep">
-                    <a href="{% url 'category_filter' slug=story.category.slug %}"
-                       class="hover:underline">{{ story.category.name }}</a>
-                </span>
-                {% endif %}
-                {% if story.ai_label == 'human' %}
-                    <span class="badge badge--human">100% Human</span>
-                {% elif story.ai_label == 'assisted' %}
-                    <span class="badge badge--assisted">AI-Assisted</span>
-                {% elif story.ai_label == 'ai' %}
-                    <span class="badge badge--ai">AI-Generated</span>
-                {% endif %}
-                {% if story.story_type == 'retelling' %}
-                    <span class="badge" style="background: color-mix(in srgb, #b45309 10%, transparent); color: #b45309; border: 1px solid #b45309;">Retelling</span>
-                {% elif story.story_type == 'adaptation' %}
-                    <span class="badge" style="background: color-mix(in srgb, #b45309 10%, transparent); color: #b45309; border: 1px solid #b45309;">Adaptation</span>
-                {% endif %}
-            </div>
-
-            <p class="story-card__excerpt">{{ story.content|truncatewords:40 }}</p>
-
-            {% if story.tag.all %}
-            <div class="flex flex-wrap gap-1.5 mt-3">
-                {% for tag in story.tag.all %}
-                <a href="{% url 'tag_detail' slug=tag.slug %}"
-                   class="text-xs px-2.5 py-0.5 rounded-full hover:opacity-70 transition-opacity"
-                   style="border: 1px solid var(--color-rule); color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 6%, transparent);">#{{ tag.name }}</a>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-    </div>
-</article>
+        {% include 'stories/_story_card.html' %}
         {% endfor %}
 
         {# Pagination — minimal, prev/next + page count. #}
